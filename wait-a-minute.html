@@ -2,792 +2,876 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>等一下 · 冲动拦截器</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>等一下 · 冲动拦截器（Wait a minute）</title>
+<script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
 <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
 
-  body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
-    background: #ffffff;
-    color: #333;
-    min-height: 100vh;
-    display: flex;
-    justify-content: center;
-  }
+body {
+  background: #000;
+  color: #e0e0e0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 20px;
+}
 
-  .app-container {
-    width: 100%;
-    max-width: 420px;
-    min-height: 100vh;
-    position: relative;
-    overflow: hidden;
-  }
+.app-container {
+  width: 100%;
+  max-width: 420px;
+  min-height: 100vh;
+  position: relative;
+}
 
-  .page {
-    display: none;
-    flex-direction: column;
-    min-height: 100vh;
-    padding: 24px 20px;
-  }
+.page {
+  display: none;
+  flex-direction: column;
+  min-height: 100vh;
+  padding-bottom: 40px;
+}
 
-  .page.active { display: flex; }
+.page.active {
+  display: flex;
+}
 
-  /* ── 页面1：启动页 ── */
-  .page1 {
-    align-items: center;
-    justify-content: center;
-    padding-top: 80px;
-  }
+/* ===== 页面1：启动页 ===== */
+#page1 {
+  justify-content: flex-start;
+  align-items: center;
+  text-align: center;
+  padding-top: 80px;
+}
 
-  .page1 .icon {
-    font-size: 64px;
-    color: #FF8C42;
-    margin-bottom: 24px;
-    line-height: 1;
-  }
+#page1 .icon {
+  font-size: 64px;
+  margin-bottom: 32px;
+  color: #A66C37;
+  line-height: 1;
+}
 
-  .page1 .title {
-    font-size: 28px;
-    font-weight: bold;
-    color: #1a3c5e;
-    text-align: center;
-    margin-bottom: 12px;
-    line-height: 1.3;
-  }
+#page1 .title {
+  font-size: 28px;
+  font-weight: 700;
+  color: #2B85A6;
+  margin-bottom: 16px;
+  line-height: 1.4;
+}
 
-  .page1 .subtitle {
-    font-size: 16px;
-    color: #999;
-    text-align: center;
-    margin-bottom: 48px;
-  }
+#page1 .subtitle {
+  font-size: 16px;
+  color: #888;
+  margin-bottom: 60px;
+  line-height: 1.5;
+}
 
-  .btn-start {
-    display: inline-block;
-    background: #2E8B9E;
-    color: #fff;
-    font-size: 18px;
-    font-weight: 600;
-    padding: 14px 0;
-    width: 200px;
-    text-align: center;
-    border: none;
-    border-radius: 30px;
-    cursor: pointer;
-    transition: background 0.2s;
-  }
+.btn-start {
+  background: #2B85A6;
+  color: #fff;
+  border: none;
+  border-radius: 30px;
+  width: 200px;
+  height: 50px;
+  font-size: 17px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s, transform 0.15s;
+}
 
-  .btn-start:hover { background: #257a8c; }
-  .btn-start:active { background: #1e6b7a; }
+.btn-start:hover { opacity: 0.9; }
+.btn-start:active { transform: scale(0.97); }
 
-  /* ── 页面2：商品信息输入页 ── */
-  .page2 .section-title {
-    font-size: 20px;
-    font-weight: 600;
-    color: #333;
-    text-align: left;
-    margin-bottom: 24px;
-  }
+/* ===== 页面2：商品信息输入页 ===== */
+#page2 .page-title {
+  font-size: 20px;
+  font-weight: 600;
+  color: #fff;
+  text-align: left;
+  margin-bottom: 24px;
+  margin-top: 20px;
+}
 
-  .input-group {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    margin-bottom: 20px;
-  }
+.input-group {
+  margin-bottom: 16px;
+}
 
-  .input-field {
-    width: 100%;
-    padding: 16px;
-    font-size: 16px;
-    background: #f5f5f5;
-    border: 2px solid transparent;
-    border-radius: 12px;
-    outline: none;
-    transition: border-color 0.2s;
-  }
+.input-group input {
+  width: 100%;
+  background: #1a1a1a;
+  border: 1px solid #333;
+  border-radius: 12px;
+  padding: 16px;
+  font-size: 16px;
+  color: #fff;
+  outline: none;
+  transition: border-color 0.2s;
+}
 
-  .input-field:focus { border-color: #2E8B9E; background: #fff; }
+.input-group input::placeholder {
+  color: #666;
+}
 
-  .examples-label {
-    font-size: 13px;
-    color: #999;
-    margin-bottom: 12px;
-  }
+.input-group input:focus {
+  border-color: #2B85A6;
+}
 
-  .examples-row {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 32px;
-  }
+.section-label {
+  font-size: 13px;
+  color: #888;
+  margin: 20px 0 12px;
+}
 
-  .example-btn {
-    flex: 1;
-    background: #f0f4f5;
-    border: 1.5px solid #e0e0e0;
-    border-radius: 20px;
-    padding: 12px 8px;
-    font-size: 13px;
-    color: #555;
-    cursor: pointer;
-    text-align: center;
-    transition: all 0.15s;
-    white-space: nowrap;
-  }
+.quick-buttons {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
 
-  .example-btn:hover { background: #e3f0f2; border-color: #2E8B9E; }
-  .example-btn:active { background: #d4eaee; }
+.btn-quick {
+  flex: 1;
+  min-width: 0;
+  background: #1a1a1a;
+  border: 1px solid #333;
+  border-radius: 20px;
+  padding: 12px 10px;
+  font-size: 13px;
+  color: #ccc;
+  cursor: pointer;
+  text-align: center;
+  transition: background 0.2s, border-color 0.2s;
+  white-space: nowrap;
+}
 
-  .btn-analyze {
-    display: block;
-    width: 100%;
-    background: #DECE59;
-    color: #333;
-    font-size: 17px;
-    font-weight: 600;
-    padding: 16px 0;
-    border: none;
-    border-radius: 30px;
-    cursor: pointer;
-    margin-top: auto;
-    transition: background 0.2s;
-  }
+.btn-quick:hover {
+  background: #252525;
+  border-color: #A66C37;
+}
 
-  .btn-analyze:hover { background: #d4c43e; }
-  .btn-analyze:active { background: #c9b92e; }
+.btn-quick:active {
+  background: #2a2a2a;
+  border-color: #A66C37;
+}
 
-  .toast {
-    position: fixed;
-    top: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: #e74c3c;
-    color: #fff;
-    padding: 12px 24px;
-    border-radius: 12px;
-    font-size: 14px;
-    z-index: 999;
-    opacity: 0;
-    transition: opacity 0.3s;
-    pointer-events: none;
-  }
+.btn-analyze {
+  width: 100%;
+  background: #A66C37;
+  color: #fff;
+  border: none;
+  border-radius: 30px;
+  height: 50px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 32px;
+  transition: opacity 0.2s, transform 0.15s;
+}
 
-  .toast.show { opacity: 1; }
+.btn-analyze:hover { opacity: 0.9; }
+.btn-analyze:active { transform: scale(0.98); }
 
-  /* ── 页面3/4/5：AI提问页 ── */
-  .chat-header {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 16px;
-  }
+/* ===== Toast ===== */
+.toast {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(220, 60, 60, 0.92);
+  color: #fff;
+  padding: 12px 24px;
+  border-radius: 10px;
+  font-size: 15px;
+  z-index: 999;
+  display: none;
+  pointer-events: none;
+}
 
-  .chat-avatar {
-    width: 44px;
-    height: 44px;
-    border-radius: 50%;
-    background: #e8f4f6;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 24px;
-    flex-shrink: 0;
-  }
+.toast.show {
+  display: block;
+  animation: toastIn 0.3s ease;
+}
 
-  .chat-name {
-    font-size: 15px;
-    font-weight: 600;
-    color: #555;
-  }
+@keyframes toastIn {
+  from { opacity: 0; transform: translate(-50%, -50%) scale(0.9); }
+  to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+}
 
-  .chat-bubble {
-    background: #f5f7f8;
-    border-radius: 18px;
-    border-top-left-radius: 4px;
-    padding: 18px 20px;
-    font-size: 16px;
-    color: #333;
-    line-height: 1.6;
-    margin-bottom: 28px;
-    max-width: 100%;
-  }
+/* ===== 页面3/4/5：AI提问页 ===== */
+.chat-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+  margin-top: 20px;
+}
 
-  .options-container {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-  }
+.chat-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #1a1a1a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  flex-shrink: 0;
+}
 
-  .options-row {
-    display: flex;
-    gap: 12px;
-  }
+.chat-name {
+  font-size: 15px;
+  color: #aaa;
+  font-weight: 500;
+}
 
-  .options-row .option-btn { flex: 1; }
+.chat-bubble {
+  background: #1a1a1a;
+  border-radius: 16px;
+  padding: 18px;
+  font-size: 16px;
+  line-height: 1.6;
+  color: #e0e0e0;
+  margin-bottom: 28px;
+  border: 1px solid #2a2a2a;
+}
 
-  .option-btn {
-    display: block;
-    width: 100%;
-    background: #f0f4f5;
-    border: 2px solid #e8e8e8;
-    border-radius: 14px;
-    padding: 16px 20px;
-    font-size: 16px;
-    color: #444;
-    cursor: pointer;
-    text-align: center;
-    transition: all 0.15s;
-  }
+.options-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
 
-  .option-btn:hover { background: #e3f0f2; border-color: #2E8B9E; }
-  .option-btn:active { background: #d4eaee; }
+.btn-option {
+  width: 100%;
+  min-height: 48px;
+  background: #1a1a1a;
+  border: 1px solid #333;
+  border-radius: 14px;
+  padding: 14px 18px;
+  font-size: 15px;
+  color: #ccc;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.2s;
+  line-height: 1.4;
+}
 
-  /* ── 页面5 机会成本展示 ── */
-  .cost-breakdown {
-    background: #fffbf0;
-    border: 1.5px solid #DECE59;
-    border-radius: 12px;
-    padding: 14px 18px;
-    margin-bottom: 20px;
-    font-size: 14px;
-    color: #8a7b2a;
-    text-align: center;
-    line-height: 1.6;
-  }
+.btn-option:hover {
+  background: #252525;
+  border-color: #2B85A6;
+}
 
-  .cost-breakdown strong { color: #c9a800; }
+.btn-option.selected {
+  background: #2B85A6;
+  border-color: #2B85A6;
+  color: #fff;
+  font-weight: 600;
+}
 
-  /* ── 页面6：分析报告页 ── */
-  .report-title {
-    font-size: 18px;
-    font-weight: bold;
-    color: #1a3c5e;
-    text-align: center;
-    margin-bottom: 20px;
-    line-height: 1.4;
-  }
+/* ===== 页面6：报告页 ===== */
+.report-card {
+  background: #111;
+  border-radius: 20px;
+  padding: 28px 22px;
+  margin-top: 20px;
+  border: 1px solid #2a2a2a;
+}
 
-  .product-info-row {
-    background: #f5f5f5;
-    border-radius: 8px;
-    padding: 12px 16px;
-    font-size: 15px;
-    color: #555;
-    margin-bottom: 20px;
-    text-align: center;
-  }
+.report-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: #fff;
+  text-align: center;
+  margin-bottom: 8px;
+  line-height: 1.5;
+}
 
-  .analysis-cards {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    margin-bottom: 20px;
-  }
+.report-meta {
+  font-size: 14px;
+  color: #aaa;
+  text-align: center;
+  margin-bottom: 24px;
+  line-height: 1.6;
+}
 
-  .analysis-card {
-    background: #fafafa;
-    border-radius: 12px;
-    padding: 16px 18px;
-    border: 1px solid #eee;
-  }
+.report-divider {
+  text-align: center;
+  color: #444;
+  font-size: 12px;
+  margin: 16px 0;
+  letter-spacing: 2px;
+  user-select: none;
+  overflow: hidden;
+  white-space: nowrap;
+}
 
-  .analysis-card .card-label {
-    font-size: 13px;
-    color: #999;
-    margin-bottom: 6px;
-  }
+.report-section {
+  margin-bottom: 2px;
+}
 
-  .analysis-card .card-answer {
-    font-size: 15px;
-    color: #444;
-    margin-bottom: 4px;
-  }
+.report-section .section-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #fff;
+  margin-bottom: 6px;
+}
 
-  .analysis-card .card-judgment {
-    font-size: 14px;
-    font-weight: 600;
-    color: #2E8B9E;
-  }
+.report-section .section-body {
+  font-size: 14px;
+  color: #aaa;
+  line-height: 1.7;
+}
 
-  .advice-box {
-    background: #fff8f0;
-    border: 1.5px solid #FF8C42;
-    border-radius: 14px;
-    padding: 18px 20px;
-    margin-bottom: 16px;
-    text-align: center;
-  }
+.report-section .section-judgment {
+  font-size: 14px;
+  color: #A66C37;
+  margin-top: 4px;
+  font-weight: 500;
+}
 
-  .advice-box .advice-verdict {
-    font-size: 28px;
-    margin-bottom: 8px;
-  }
+.report-verdict {
+  text-align: center;
+  font-size: 28px;
+  font-weight: 700;
+  margin: 20px 0 6px;
+  line-height: 1.3;
+}
 
-  .advice-box .advice-reason {
-    font-size: 14px;
-    color: #8a6a3a;
-    line-height: 1.5;
-  }
+.report-verdict.buy { color: #4CAF50; }
+.report-verdict.wait { color: #FFB74D; }
+.report-verdict.skip { color: #EF5350; }
 
-  .summary-text {
-    text-align: center;
-    font-size: 15px;
-    color: #666;
-    margin-bottom: 28px;
-    line-height: 1.5;
-  }
+.report-total {
+  text-align: center;
+  font-size: 22px;
+  color: #F0EBA8;
+  margin-bottom: 18px;
+  font-weight: 600;
+}
 
-  .report-actions {
-    display: flex;
-    gap: 12px;
-  }
+.report-insight {
+  font-size: 14px;
+  color: #ccc;
+  line-height: 1.7;
+  margin-bottom: 14px;
+  text-align: center;
+}
 
-  .report-actions .btn-action {
-    flex: 1;
-    padding: 14px 0;
-    font-size: 15px;
-    font-weight: 600;
-    border: none;
-    border-radius: 30px;
-    cursor: pointer;
-    text-align: center;
-    transition: background 0.2s;
-  }
+.report-quote {
+  font-size: 14px;
+  color: #888;
+  font-style: italic;
+  text-align: center;
+  margin-bottom: 28px;
+  line-height: 1.6;
+}
 
-  .btn-restart {
-    background: #f0f0f0;
-    color: #555;
-  }
+.report-buttons {
+  display: flex;
+  gap: 12px;
+}
 
-  .btn-restart:hover { background: #e4e4e4; }
-  .btn-restart:active { background: #d8d8d8; }
+.report-buttons button {
+  flex: 1;
+  height: 48px;
+  border-radius: 30px;
+  border: none;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s, transform 0.15s;
+}
 
-  .btn-download {
-    background: #2E8B9E;
-    color: #fff;
-  }
+.btn-restart {
+  background: #333;
+  color: #ccc;
+}
 
-  .btn-download:hover { background: #257a8c; }
-  .btn-download:active { background: #1e6b7a; }
+.btn-restart:hover { opacity: 0.85; }
+
+.btn-download {
+  background: #2B85A6;
+  color: #fff;
+}
+
+.btn-download:hover { opacity: 0.9; }
+
+.btn-restart:active,
+.btn-download:active {
+  transform: scale(0.97);
+}
 </style>
 </head>
 <body>
 
 <div class="app-container">
 
-  <!-- ═══ 页面1：启动页 ═══ -->
-  <div class="page page1 active" id="page1">
+  <!-- ═══════════════ 页面1：启动页 ═══════════════ -->
+  <div id="page1" class="page active">
     <div class="icon">⏸️</div>
-    <h1 class="title">等一下 · 冲动拦截器<br>（Wait a minute）</h1>
-    <p class="subtitle">购物前，让AI问你3个问题</p>
-    <button class="btn-start" onclick="goTo('page2')">开始拦截</button>
+    <div class="title">等一下 · 冲动拦截器<br>（Wait a minute）</div>
+    <div class="subtitle">购物前，让"等一下助手"问你3个问题</div>
+    <button class="btn-start" onclick="goToPage(2)">开始拦截</button>
   </div>
 
-  <!-- ═══ 页面2：商品信息输入页 ═══ -->
-  <div class="page page2" id="page2">
-    <h2 class="section-title">📦 把你想买的商品告诉我</h2>
-
+  <!-- ═══════════════ 页面2：商品信息输入页 ═══════════════ -->
+  <div id="page2" class="page">
+    <div class="page-title">📦 把你想买的商品告诉我</div>
     <div class="input-group">
-      <input class="input-field" id="productName" type="text" placeholder="商品名称，如：耐克运动鞋" autocomplete="off">
-      <input class="input-field" id="productPrice" type="number" placeholder="价格，如：500" min="0" step="0.01" autocomplete="off">
+      <input type="text" id="productName" placeholder="商品名称，如：耐克运动鞋" autocomplete="off">
     </div>
-
-    <p class="examples-label">或者试试这些例子（点击自动填入）：</p>
-    <div class="examples-row">
-      <button class="example-btn" onclick="fillExample('运动鞋', 500)">👟 运动鞋 / 500元</button>
-      <button class="example-btn" onclick="fillExample('平板电脑', 3999)">📱 平板电脑 / 3999元</button>
-      <button class="example-btn" onclick="fillExample('面霜', 298)">💄 面霜 / 298元</button>
+    <div class="input-group">
+      <input type="number" id="productPrice" placeholder="价格，如：500" min="1" step="1" autocomplete="off">
     </div>
-
-    <button class="btn-analyze" onclick="startAnalyze()">冷静一下，开始分析</button>
+    <div class="section-label">或者试试这些例子（点击自动填入）：</div>
+    <div class="quick-buttons">
+      <button class="btn-quick" onclick="fillExample('运动鞋', 500)">👟 运动鞋 / 500元</button>
+      <button class="btn-quick" onclick="fillExample('平板电脑', 3999)">📱 平板电脑 / 3999元</button>
+      <button class="btn-quick" onclick="fillExample('面霜', 298)">💄 面霜 / 298元</button>
+    </div>
+    <button class="btn-analyze" onclick="startAnalysis()">冷静一下，开始分析</button>
   </div>
 
-  <!-- ═══ 页面3：问题1 ═══ -->
-  <div class="page page3" id="page3">
+  <!-- ═══════════════ 页面3：问题1 - 锚定效应 ═══════════════ -->
+  <div id="page3" class="page">
     <div class="chat-header">
       <div class="chat-avatar">🤖</div>
-      <span class="chat-name">等一下助手</span>
+      <div class="chat-name">等一下助手</div>
     </div>
-    <div class="chat-bubble">
-      如果这件商品完全没有折扣，你还会买吗？还是说，只是觉得不买就亏了？
-    </div>
-    <div class="options-row">
-      <button class="option-btn" onclick="answerQ1('还是会买')">✅ 还是会买</button>
-      <button class="option-btn" onclick="answerQ1('主要是怕错过折扣')">❌ 主要是怕错过折扣</button>
-    </div>
+    <div class="chat-bubble" id="q1Bubble"></div>
+    <div class="options-list" id="q1Options"></div>
   </div>
 
-  <!-- ═══ 页面4：问题2 ═══ -->
-  <div class="page page4" id="page4">
+  <!-- ═══════════════ 页面4：问题2 - 损失厌恶 ═══════════════ -->
+  <div id="page4" class="page">
     <div class="chat-header">
       <div class="chat-avatar">🤖</div>
-      <span class="chat-name">等一下助手</span>
+      <div class="chat-name">等一下助手</div>
     </div>
-    <div class="chat-bubble">
-      你过去30天买过类似的商品吗？上次买的那个，你用过几次？
-    </div>
-    <div class="options-container">
-      <button class="option-btn" onclick="answerQ2('买过，很少用')">买过，很少用</button>
-      <button class="option-btn" onclick="answerQ2('买过，经常用')">买过，经常用</button>
-      <button class="option-btn" onclick="answerQ2('没买过')">没买过</button>
-    </div>
+    <div class="chat-bubble">如果你买了该商品，并且使用体验感非常好，但一周后发现它降价20%，你会更庆幸'早用了'；还是更后悔'买早了'？</div>
+    <div class="options-list" id="q2Options"></div>
   </div>
 
-  <!-- ═══ 页面5：问题3 ═══ -->
-  <div class="page page5" id="page5">
+  <!-- ═══════════════ 页面5：问题3 - 机会成本 ═══════════════ -->
+  <div id="page5" class="page">
     <div class="chat-header">
       <div class="chat-avatar">🤖</div>
-      <span class="chat-name">等一下助手</span>
+      <div class="chat-name">等一下助手</div>
     </div>
-
-    <div class="cost-breakdown" id="costBreakdown"></div>
-
     <div class="chat-bubble" id="q3Bubble"></div>
-    <div class="options-row">
-      <button class="option-btn" onclick="answerQ3('更想要体验')">🍲 更想要体验</button>
-      <button class="option-btn" onclick="answerQ3('还是想要商品')">👟 还是想要商品</button>
-    </div>
+    <div class="options-list" id="q3Options"></div>
   </div>
 
-  <!-- ═══ 页面6：分析报告页 ═══ -->
-  <div class="page page6" id="page6">
-    <h2 class="report-title">【等一下 · 冷静分析报告】</h2>
-    <div class="product-info-row" id="reportProductInfo"></div>
-
-    <div class="analysis-cards" id="analysisCards"></div>
-
-    <div class="advice-box" id="adviceBox"></div>
-    <div class="summary-text" id="summaryText"></div>
-
-    <div class="report-actions">
-      <button class="btn-action btn-restart" onclick="restart()">🔁 重新分析</button>
-      <button class="btn-action btn-download" onclick="downloadReport()">📥 下载报告</button>
-    </div>
+  <!-- ═══════════════ 页面6：冷静分析报告 ═══════════════ -->
+  <div id="page6" class="page">
+    <div id="reportContent" class="report-card"></div>
   </div>
 
 </div>
 
-<div class="toast" id="toast"></div>
+<div id="toast" class="toast"></div>
 
 <script>
-// ═══════════════════════════════════════════
-// 全局数据存储
-// ═══════════════════════════════════════════
-var Store = {
-  productName: '',
-  productPrice: 0,
-  q1: '',  // 问题1答案
-  q2: '',  // 问题2答案
-  q3: ''   // 问题3答案
+// ==================== 全局数据存储 ====================
+var store = {
+  商品名: '',
+  价格: 0,
+  问题1得分: 0,
+  问题1选项文本: '',
+  问题2得分: 0,
+  问题2选项文本: '',
+  问题3得分: 0,
+  问题3选项文本: '',
+  总分: 0
 };
 
-// ═══════════════════════════════════════════
-// 工具函数
-// ═══════════════════════════════════════════
+// ==================== 页面导航 ====================
+function goToPage(n) {
+  // 隐藏所有页面
+  var pages = document.querySelectorAll('.page');
+  for (var i = 0; i < pages.length; i++) {
+    pages[i].classList.remove('active');
+  }
+  // 显示目标页面
+  var target = document.getElementById('page' + n);
+  if (target) {
+    target.classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'instant' });
+  }
 
-function goTo(pageId) {
-  document.querySelectorAll('.page').forEach(function(p) {
-    p.classList.remove('active');
-  });
-  document.getElementById(pageId).classList.add('active');
-  // 滚动到顶部
-  window.scrollTo({ top: 0, behavior: 'smooth' });
+  // 进入页面3时渲染问题1
+  if (n === 3) renderQuestion1();
+  // 进入页面4时渲染问题2
+  if (n === 4) renderQuestion2();
+  // 进入页面5时渲染问题3
+  if (n === 5) renderQuestion3();
+  // 进入页面6时渲染报告
+  if (n === 6) renderReport();
 }
 
+// ==================== Toast提示 ====================
 function showToast(msg) {
   var toast = document.getElementById('toast');
   toast.textContent = msg;
   toast.classList.add('show');
-  clearTimeout(toast._timeout);
-  toast._timeout = setTimeout(function() {
+  setTimeout(function() {
     toast.classList.remove('show');
   }, 2000);
 }
 
-function resetStore() {
-  Store.productName = '';
-  Store.productPrice = 0;
-  Store.q1 = '';
-  Store.q2 = '';
-  Store.q3 = '';
+// ==================== HTML转义 ====================
+function escapeHTML(str) {
+  var div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
 }
 
-// ═══════════════════════════════════════════
-// 页面2：填充示例 & 开始分析
-// ═══════════════════════════════════════════
-
+// ==================== 页面2：示例填充 ====================
 function fillExample(name, price) {
   document.getElementById('productName').value = name;
   document.getElementById('productPrice').value = price;
 }
 
-function startAnalyze() {
+// ==================== 页面2：开始分析校验 ====================
+function startAnalysis() {
   var nameInput = document.getElementById('productName');
   var priceInput = document.getElementById('productPrice');
   var name = nameInput.value.trim();
   var priceStr = priceInput.value.trim();
 
-  if (!name || !priceStr) {
+  if (!name) {
     showToast('请填写商品名称和价格');
+    nameInput.focus();
+    return;
+  }
+  if (!priceStr) {
+    showToast('请填写商品名称和价格');
+    priceInput.focus();
     return;
   }
 
   var price = parseFloat(priceStr);
   if (isNaN(price) || price <= 0) {
-    showToast('请输入有效的价格');
+    showToast('请输入有效的价格（大于0的数字）');
+    priceInput.focus();
     return;
   }
 
-  Store.productName = name;
-  Store.productPrice = price;
+  // 保存到全局变量
+  store.商品名 = name;
+  store.价格 = price;
 
-  goTo('page3');
+  goToPage(3);
 }
 
-// ═══════════════════════════════════════════
-// 页面3：问题1
-// ═══════════════════════════════════════════
-
-function answerQ1(answer) {
-  Store.q1 = answer;
-  goTo('page4');
+// ==================== 构建选项按钮（通用） ====================
+function buildOptionButtons(options, saveCallback) {
+  var buttons = [];
+  for (var i = 0; i < options.length; i++) {
+    (function(opt) {
+      var btn = document.createElement('button');
+      btn.className = 'btn-option';
+      btn.textContent = opt.score + '分 = ' + opt.text;
+      btn.addEventListener('click', function() {
+        // 选中反馈
+        btn.classList.add('selected');
+        // 短暂延迟后保存并跳转
+        setTimeout(function() {
+          saveCallback(opt.score, opt.text);
+        }, 200);
+      });
+      buttons.push(btn);
+    })(options[i]);
+  }
+  return buttons;
 }
 
-// ═══════════════════════════════════════════
-// 页面4：问题2
-// ═══════════════════════════════════════════
+// ==================== 页面3：问题1 - 锚定效应 ====================
+function renderQuestion1() {
+  var price = store.价格;
+  var discounted = Math.round(price * 0.7);
+  var bubble = document.getElementById('q1Bubble');
+  bubble.textContent = '如果这件商品将在7天后有个30%的优惠，优惠后价格为' + discounted + '元，你会？';
 
-function answerQ2(answer) {
-  Store.q2 = answer;
-  // 进入页面5前，先计算并渲染机会成本
-  renderOpportunityCost();
-  goTo('page5');
+  var container = document.getElementById('q1Options');
+  container.innerHTML = '';
+
+  var options = [
+    { score: 1, text: '绝对会现在买' },
+    { score: 2, text: '倾向现在买' },
+    { score: 3, text: '无所谓' },
+    { score: 4, text: '倾向7天后买' },
+    { score: 5, text: '绝对会7天后买' }
+  ];
+
+  var buttons = buildOptionButtons(options, function(score, text) {
+    store.问题1得分 = score;
+    store.问题1选项文本 = text;
+    goToPage(4);
+  });
+
+  for (var i = 0; i < buttons.length; i++) {
+    container.appendChild(buttons[i]);
+  }
 }
 
-// ═══════════════════════════════════════════
-// 页面5：问题3 — 机会成本换算
-// ═══════════════════════════════════════════
+// ==================== 页面4：问题2 - 损失厌恶 ====================
+function renderQuestion2() {
+  var container = document.getElementById('q2Options');
+  container.innerHTML = '';
 
-function renderOpportunityCost() {
-  var price = Store.productPrice;
+  var options = [
+    { score: 1, text: '极度庆幸早用' },
+    { score: 2, text: '有点庆幸早用' },
+    { score: 3, text: '无所谓' },
+    { score: 4, text: '有点后悔买早' },
+    { score: 5, text: '极度后悔买早' }
+  ];
+
+  var buttons = buildOptionButtons(options, function(score, text) {
+    store.问题2得分 = score;
+    store.问题2选项文本 = text;
+    goToPage(5);
+  });
+
+  for (var i = 0; i < buttons.length; i++) {
+    container.appendChild(buttons[i]);
+  }
+}
+
+// ==================== 页面5：问题3 - 机会成本 ====================
+function renderQuestion3() {
+  var price = store.价格;
   var meals = Math.floor(price / 50);
-  var massages = Math.floor(price / 100);
   var teas = Math.floor(price / 25);
+  var massages = Math.floor(price / 100);
 
-  var breakdownEl = document.getElementById('costBreakdown');
-  breakdownEl.innerHTML = '💡 <strong>' + price + '元</strong> ≈ <strong>' + meals + '顿饭</strong> / <strong>' + massages + '次按摩</strong> / <strong>' + teas + '杯奶茶</strong>';
+  // 构建动态文本（为0的不显示）
+  var parts = [];
+  if (meals > 0) parts.push(meals + '顿饭');
+  if (teas > 0) parts.push(teas + '杯奶茶');
+  if (massages > 0) parts.push(massages + '次按摩');
 
-  var bubbleEl = document.getElementById('q3Bubble');
-  bubbleEl.textContent = '这' + price + '元，换成你最爱的' + meals + '顿饭 / ' + massages + '次按摩 / ' + teas + '杯奶茶。你更想要商品，还是这些体验？';
+  var bubbleText;
+  if (parts.length === 0) {
+    bubbleText = '这' + price + '元，你会更想要商品，还是这些体验？';
+  } else {
+    bubbleText = '这' + price + '元，可换成' + parts.join(' / ') + '。你会更想要商品，还是这些体验？';
+  }
+
+  document.getElementById('q3Bubble').textContent = bubbleText;
+
+  var container = document.getElementById('q3Options');
+  container.innerHTML = '';
+
+  var options = [
+    { score: 1, text: '绝对想要商品' },
+    { score: 2, text: '倾向想要商品' },
+    { score: 3, text: '无所谓' },
+    { score: 4, text: '倾向想要体验' },
+    { score: 5, text: '绝对想要体验' }
+  ];
+
+  var buttons = buildOptionButtons(options, function(score, text) {
+    store.问题3得分 = score;
+    store.问题3选项文本 = text;
+    goToPage(6);
+  });
+
+  for (var i = 0; i < buttons.length; i++) {
+    container.appendChild(buttons[i]);
+  }
 }
 
-function answerQ3(answer) {
-  Store.q3 = answer;
-  renderReport();
-  goTo('page6');
-}
+// ==================== 动态判断卡片映射 ====================
 
-// ═══════════════════════════════════════════
-// 页面6：分析报告 — 动态生成
-// ═══════════════════════════════════════════
-
-function renderReport() {
-  var price = Store.productPrice;
-  var meals = Math.floor(price / 50);
-  var massages = Math.floor(price / 100);
-  var teas = Math.floor(price / 25);
-
-  // 商品信息行
-  document.getElementById('reportProductInfo').textContent =
-    '商品：' + Store.productName + '，价格：' + price + '元';
-
-  // ── 分析卡片 ──
-  var cardsHtml = '';
-
-  // 卡片1：折扣幻觉
-  var card1Answer, card1Judgment;
-  if (Store.q1 === '主要是怕错过折扣') {
-    card1Answer = '你主要是怕错过折扣';
-    card1Judgment = '→ 判断：不是真实需求';
-  } else {
-    card1Answer = '你是真实需要';
-    card1Judgment = '→ 判断：可以再想想是否需要';
-  }
-  cardsHtml += '' +
-    '<div class="analysis-card">' +
-      '<div class="card-label">折扣幻觉？</div>' +
-      '<div class="card-answer">' + card1Answer + '</div>' +
-      '<div class="card-judgment">' + card1Judgment + '</div>' +
-    '</div>';
-
-  // 卡片2：同类存货
-  var card2Answer, card2Judgment;
-  if (Store.q2 === '买过，很少用') {
-    card2Answer = '你买过类似但很少用';
-    card2Judgment = '→ 判断：边际效用低';
-  } else if (Store.q2 === '买过，经常用') {
-    card2Answer = '你经常用这类商品';
-    card2Judgment = '→ 判断：确实是高频需求';
-  } else {
-    card2Answer = '你没买过类似的';
-    card2Judgment = '→ 判断：可能是新尝试';
-  }
-  cardsHtml += '' +
-    '<div class="analysis-card">' +
-      '<div class="card-label">同类存货？</div>' +
-      '<div class="card-answer">' + card2Answer + '</div>' +
-      '<div class="card-judgment">' + card2Judgment + '</div>' +
-    '</div>';
-
-  // 卡片3：机会成本换算
-  var card3Answer = price + '元 = ' + meals + '顿饭 / ' + massages + '次按摩 / ' + teas + '杯奶茶';
-  var card3Judgment;
-  if (Store.q3 === '更想要体验') {
-    card3Judgment = '→ 判断：商品性价比不高';
-  } else {
-    card3Judgment = '→ 判断：商品对你确有价值';
-  }
-  cardsHtml += '' +
-    '<div class="analysis-card">' +
-      '<div class="card-label">机会成本换算</div>' +
-      '<div class="card-answer">' + card3Answer + '</div>' +
-      '<div class="card-judgment">' + card3Judgment + '</div>' +
-    '</div>';
-
-  document.getElementById('analysisCards').innerHTML = cardsHtml;
-
-  // ── 计分逻辑 ──
-  // 偏向"不买"的得分点
-  var scoreNoBuy = 0;
-  var scoreBuy = 0;
-
-  if (Store.q1 === '主要是怕错过折扣') scoreNoBuy++;
-  else scoreBuy++;
-
-  if (Store.q2 === '买过，很少用') scoreNoBuy++;
-  else if (Store.q2 === '买过，经常用') scoreBuy++;
-  // "没买过" → 中性，不加任何一方
-
-  if (Store.q3 === '更想要体验') scoreNoBuy++;
-  else scoreBuy++;
-
-  // ── 建议框 ──
-  var verdict = '';
-  var reason = '';
-  var summary = '';
-
-  if (scoreNoBuy >= 2) {
-    verdict = '❌ 不买';
-    reason = '折扣可能只是营销手段，同类商品你买过但使用率不高，而且这些钱换成的体验对你更有吸引力——综合来看，这件商品不是必需品。';
-    summary = '💬 省下的' + price + '元，换成' + meals + '顿饭 / ' + massages + '次按摩 / ' + teas + '杯奶茶可能更快乐';
-  } else if (scoreBuy >= 2) {
-    verdict = '✅ 买';
-    reason = '你是真实需要这件商品，同类商品你也经常使用，而且你确认商品比体验更有价值。';
-    summary = '💬 你买的是功能与情绪价值，确认值得就行';
-  } else {
-    verdict = '⏳ 等3天再决定';
-    reason = '你的判断有些摇摆——不急这一时，给自己三天冷静期，冲动会自然消退。';
-    summary = '💬 放3天再看，冲动会下降一半';
-  }
-
-  document.getElementById('adviceBox').innerHTML = '' +
-    '<div class="advice-verdict">' + verdict + '</div>' +
-    '<div class="advice-reason">' + reason + '</div>';
-
-  document.getElementById('summaryText').textContent = summary;
-
-  // 保存报告数据供下载使用
-  Store.report = {
-    card1Answer: card1Answer,
-    card1Judgment: card1Judgment,
-    card2Answer: card2Answer,
-    card2Judgment: card2Judgment,
-    card3Answer: card3Answer,
-    card3Judgment: card3Judgment,
-    verdict: verdict,
-    reason: reason,
-    summary: summary,
-    meals: meals,
-    massages: massages,
-    teas: teas
+// 卡片1：折扣幻觉？——根据问题1得分动态生成
+function getCard1Content(score) {
+  var map = {
+    1: { body: '你完全不在意7天后的折扣，立刻拥有才是硬道理', judgment: '→ 判断：折扣对你毫无影响' },
+    2: { body: '你更在意立刻拥有的体验，而不是7天后的差价', judgment: '→ 判断：折扣对你构不成诱惑' },
+    3: { body: '你对折扣不太敏感，买不买看心情，7天后的价格变化似乎不太重要', judgment: '→ 判断：折扣不是你的决策因素' },
+    4: { body: '你既怕现在买亏，又怕7天后没货或没了兴致', judgment: '→ 判断：你在"省钱"与"得到"之间反复摇摆' },
+    5: { body: '你明确知道7天后会便宜，现在买就是纯亏', judgment: '→ 判断：你是价格敏感型，折扣是你最大的驱动力' }
   };
+  return map[score] || map[3];
 }
 
-// ═══════════════════════════════════════════
-// 底部按钮操作
-// ═══════════════════════════════════════════
+// 卡片2：损失心态？——根据问题2得分动态生成
+function getCard2Content(score) {
+  var map = {
+    1: { body: '你完全不在乎之后的价格变化，早享受带来的满足感才是核心价值', judgment: '→ 判断：使用价值 &gt; 价格波动' },
+    2: { body: '你更看重"早用早享受"的实际收益，降价不会让你太后悔', judgment: '→ 判断：使用价值 &gt; 价格波动' },
+    3: { body: '你对价格波动情绪稳定，既不庆幸也不后悔', judgment: '→ 判断：情绪不受价格波动影响' },
+    4: { body: '理智告诉你早享用很爽，但情感上看到降价还是会心紧', judgment: '→ 判断：理性与情绪正在你脑子里打架' },
+    5: { body: '省下来的钱才是实在的，买贵了就是失败', judgment: '→ 判断：你对"亏"的恐惧压倒了"得到"的喜悦' }
+  };
+  return map[score] || map[3];
+}
 
-function restart() {
-  resetStore();
+// 卡片3：机会成本换算——根据问题3得分动态生成
+function getCard3Content(score) {
+  var map = {
+    1: { body: '你毫不犹豫地选择商品，体验完全无法替代实物', judgment: '→ 判断：你认定商品比短暂体验更值得' },
+    2: { body: '商品对你更有吸引力，但体验也有一定分量', judgment: '→ 判断：你倾向于商品，但体验也有分量' },
+    3: { body: '你在商品和体验之间完全中立，两者对你来说差不多', judgment: '→ 判断：商品与体验对你同等重要' },
+    4: { body: '你还在认真衡量"商品"和"体验"谁更值', judgment: '→ 判断：你还在认真衡量"商品"和"体验"谁更值' },
+    5: { body: '你把钱更愿意留给体验，而非商品', judgment: '→ 判断：你把钱更愿意留给体验，而非商品' }
+  };
+  return map[score] || map[3];
+}
+
+// ==================== 页面6：报告生成 ====================
+function renderReport() {
+  store.总分 = store.问题1得分 + store.问题2得分 + store.问题3得分;
+
+  var name = store.商品名;
+  var price = store.价格;
+  var total = store.总分;
+  var meals = Math.floor(price / 50);
+  var teas = Math.floor(price / 25);
+  var massages = Math.floor(price / 100);
+
+  // 构建机会成本文本（为0的不显示，用于报告）
+  var costParts = [];
+  if (meals > 0) costParts.push(meals + '顿饭');
+  if (massages > 0) costParts.push(massages + '次按摩');
+  if (teas > 0) costParts.push(teas + '杯奶茶');
+  var costText = costParts.length > 0 ? costParts.join(' / ') : '（金额较低，未做换算）';
+
+  // 根据用户每题实际得分动态获取卡片内容
+  var card1 = getCard1Content(store.问题1得分);
+  var card2 = getCard2Content(store.问题2得分);
+  var card3 = getCard3Content(store.问题3得分);
+
+  // 构建三个判断卡片HTML（所有场景共用）
+  var cardsHtml = '' +
+    '<div class="report-divider">━━━━━━━━━━━━━━━━━━━━</div>' +
+    '<div class="report-section">' +
+      '<div class="section-title">折扣幻觉？</div>' +
+      '<div class="section-body">' + card1.body + '</div>' +
+      '<div class="section-judgment">' + card1.judgment + '</div>' +
+    '</div>' +
+    '<div class="report-divider"></div>' +
+    '<div class="report-section">' +
+      '<div class="section-title">损失心态？</div>' +
+      '<div class="section-body">' + card2.body + '</div>' +
+      '<div class="section-judgment">' + card2.judgment + '</div>' +
+    '</div>' +
+    '<div class="report-divider"></div>' +
+    '<div class="report-section">' +
+      '<div class="section-title">机会成本换算</div>' +
+      '<div class="section-body">' + price + '元 = ' + costText + '</div>' +
+      '<div class="section-judgment">' + card3.judgment + '</div>' +
+    '</div>' +
+    '<div class="report-divider">━━━━━━━━━━━━━━━━━━━━</div>';
+
+  var verdictHtml = '';
+  var insightText = '';
+  var quoteText = '';
+
+  if (total <= 6) {
+    // 场景一：买
+    verdictHtml = '<div class="report-verdict buy">✅ 买</div>';
+    insightText = '你心里其实早就有了答案，现在只是需要有人帮你确认一下。这件商品带来的使用价值和情绪价值，在你看来已经超过了它的标价——那就买吧，别让犹豫消耗你的精力。';
+    quoteText = '💬 好决策不是"最便宜"，而是"买了不纠结"';
+  } else if (total <= 11) {
+    // 场景二：等3天再决定
+    verdictHtml = '<div class="report-verdict wait">⏳ 等3天再决定</div>';
+    insightText = '你现在正处于"想要但不确定"的摇摆区——既怕错过优惠，又怕买完后悔。这说明欲望和需求之间还有一段距离。把商品丢进购物车，关掉页面，3天后再回来看。';
+    quoteText = '💬 3天后如果还惦记，那是真需要；如果忘了，那是真省了';
+  } else {
+    // 场景三：不买
+    verdictHtml = '<div class="report-verdict skip">❌ 不买</div>';
+    insightText = '你不是买不起，而是买完之后"爽感"会迅速消失，但"花掉这笔钱"的感觉会一直跟着你。这件商品给你带来的快乐，可能比不上你用它换来的那几顿饭、几杯奶茶或几次按摩。放过它，也放过你的钱包吧。';
+    quoteText = '💬 不是所有好东西都非要拥有，把钱留给能让你更快乐的地方';
+  }
+
+  var html = '' +
+    '<div class="report-title">【等一下 · 冷静分析报告】</div>' +
+    '<div class="report-meta">商品：' + escapeHTML(name) + '，价格：' + price + '元</div>' +
+    cardsHtml +
+    verdictHtml +
+    '<div class="report-total">总分：' + total + '分</div>' +
+    '<div class="report-insight">' + insightText + '</div>' +
+    '<div class="report-quote">' + quoteText + '</div>' +
+    '<div class="report-buttons">' +
+      '<button class="btn-restart" onclick="restartAnalysis()">重新分析</button>' +
+      '<button class="btn-download" onclick="downloadReport()">下载报告</button>' +
+    '</div>';
+
+  document.getElementById('reportContent').innerHTML = html;
+}
+
+// ==================== 重新分析 ====================
+function restartAnalysis() {
+  // 清空所有数据
+  store = {
+    商品名: '',
+    价格: 0,
+    问题1得分: 0,
+    问题1选项文本: '',
+    问题2得分: 0,
+    问题2选项文本: '',
+    问题3得分: 0,
+    问题3选项文本: '',
+    总分: 0
+  };
+  // 清空输入框
   document.getElementById('productName').value = '';
   document.getElementById('productPrice').value = '';
-  goTo('page2');
+  // 回到页面2
+  goToPage(2);
 }
 
+// ==================== 下载报告为PNG ====================
 function downloadReport() {
-  var r = Store.report;
-  var price = Store.productPrice;
+  var reportEl = document.getElementById('reportContent');
 
-  var now = new Date();
-  var dateStr = now.getFullYear() + '-' +
-    String(now.getMonth() + 1).padStart(2, '0') + '-' +
-    String(now.getDate()).padStart(2, '0') + ' ' +
-    String(now.getHours()).padStart(2, '0') + ':' +
-    String(now.getMinutes()).padStart(2, '0') + ':' +
-    String(now.getSeconds()).padStart(2, '0');
+  function doDownload(el) {
+    html2canvas(el, {
+      backgroundColor: '#111',
+      scale: 2,
+      useCORS: true,
+      logging: false
+    }).then(function(canvas) {
+      var link = document.createElement('a');
+      link.download = '等一下-冷静分析报告.png';
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+      setTimeout(function() {
+        alert('报告已保存为图片，可分享给朋友也冷静一下');
+      }, 300);
+    }).catch(function() {
+      alert('报告生成失败，请重试。');
+    });
+  }
 
-  var content = '';
-  content += '══════════════════════════════════\n';
-  content += '  【等一下 · 冷静分析报告】\n';
-  content += '══════════════════════════════════\n\n';
-  content += '商品名称：' + Store.productName + '\n';
-  content += '价格：' + price + ' 元\n\n';
-  content += '──────────────────────────────\n';
-  content += '  分析卡片\n';
-  content += '──────────────────────────────\n\n';
-  content += '【折扣幻觉？】\n';
-  content += '  你的回答：' + r.card1Answer + '\n';
-  content += '  判断：' + r.card1Judgment.replace('→ 判断：', '') + '\n\n';
-  content += '【同类存货？】\n';
-  content += '  你的回答：' + r.card2Answer + '\n';
-  content += '  判断：' + r.card2Judgment.replace('→ 判断：', '') + '\n\n';
-  content += '【机会成本换算】\n';
-  content += '  ' + r.card3Answer + '\n';
-  content += '  判断：' + r.card3Judgment.replace('→ 判断：', '') + '\n\n';
-  content += '──────────────────────────────\n';
-  content += '  拦截建议\n';
-  content += '──────────────────────────────\n\n';
-  content += '结果：' + r.verdict + '\n';
-  content += '理由：' + r.reason + '\n\n';
-  content += '💬 ' + r.summary.replace('💬 ', '') + '\n\n';
-  content += '──────────────────────────────\n';
-  content += '  生成时间：' + dateStr + '\n';
-  content += '  来自：等一下 · 冲动拦截器\n';
-  content += '──────────────────────────────\n';
+  if (typeof html2canvas === 'undefined') {
+    showToast('正在加载下载组件，请稍后再试…');
+    var script = document.createElement('script');
+    script.src = 'https://html2canvas.hertzen.com/dist/html2canvas.min.js';
+    script.onload = function() {
+      doDownload(reportEl);
+    };
+    script.onerror = function() {
+      alert('下载组件加载失败，请检查网络连接后重试。');
+    };
+    document.head.appendChild(script);
+    return;
+  }
 
-  var filename = '冲动拦截报告_' + Store.productName + '_' + price + '元.txt';
-
-  var blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
-  var url = URL.createObjectURL(blob);
-  var a = document.createElement('a');
-  a.href = url;
-  a.download = filename;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
-
-  showToast('报告已保存到本地');
+  doDownload(reportEl);
 }
 
-// ═══════════════════════════════════════════
-// 页面2回车键快捷提交
-// ═══════════════════════════════════════════
-
+// ==================== 页面2回车键快捷提交 ====================
 document.getElementById('productPrice').addEventListener('keydown', function(e) {
   if (e.key === 'Enter') {
-    startAnalyze();
+    startAnalysis();
   }
 });
 </script>
